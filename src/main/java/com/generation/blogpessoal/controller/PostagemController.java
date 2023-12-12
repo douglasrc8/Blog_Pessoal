@@ -79,8 +79,13 @@ public class PostagemController {
 		if (postagem.isEmpty()) /* Verificar se o valor digitado existe */
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND); /* Se não existir, retornar NOT FOUND */
 		else
-			postagemRepository.deleteById(id); /*SE for encontrado, deletar*/
-
+			postagemRepository.deleteById(id); /*Se for encontrado, deletar*/
+		
+		 
+		/* Optional<Postagem> postagem = postagemRepository.findById(id);
+		.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))
+		.map(postagemRepository -> postagemRepository.; */
+		
 		// DELETE FROM tb_postagens WHERE id = ?;
 	}
 }
