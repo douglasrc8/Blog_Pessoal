@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.generation.blogpessoal.model.Postagem;
 import com.generation.blogpessoal.repository.PostagemRepository;
+import com.generation.blogpessoal.repository.TemaRepository;
 
 import jakarta.validation.Valid;
 
@@ -31,6 +32,9 @@ public class PostagemController {
 	@Autowired
 	private PostagemRepository postagemRepository;
 
+	@Autowired
+	private TemaRepository temaRepository;
+
 	@GetMapping
 	public ResponseEntity<List<Postagem>> getAll() {
 		return ResponseEntity.ok(postagemRepository.findAll());
@@ -40,8 +44,7 @@ public class PostagemController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Postagem> getById(@PathVariable Long id) {
-		return postagemRepository.findById(id)
-				.map(resposta -> ResponseEntity.ok(resposta))
+		return postagemRepository.findById(id).map(resposta -> ResponseEntity.ok(resposta))
 				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 
 		// SELECT * FROM tb_postagens WHERE id = ?;
@@ -54,20 +57,32 @@ public class PostagemController {
 
 	@PostMapping
 	public ResponseEntity<Postagem> post(@Valid @RequestBody Postagem postagem) {
-		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(postagemRepository.save(postagem));
+
+		if (temaRepository.existsById(postagem.getTema().getId()))
+			return ResponseEntity.status(HttpStatus.CREATED).body(postagemRepository.save(postagem));
+
+		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tema não existe!", null);
 
 		// INSERT INTO tb_postagens (titulo, texto) VALUES (?, ?);
 	}
 
 	@PutMapping
 	public ResponseEntity<Postagem> put(@Valid @RequestBody Postagem postagem) {
-		return postagemRepository.findById(postagem.getId())
-				.map(response -> ResponseEntity.status(HttpStatus.OK) /* Retornar se foi encontrado o id digitado */
-				.body(postagemRepository.save(postagem))) /* Salvar os dados atualizados */
-				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build()); /* Se não for encontrado, mostrar o erro 404 NOT FOUND */
-				
-				/* ResponseEntity.status(HttpStatus.OK).body(postagemRepository.save(postagem)); */
+
+		if (postagemRepository.existsById(postagem.getId())) {
+
+			if (temaRepository.existsById(postagem.getTema().getId()))
+				return ResponseEntity.status(HttpStatus.OK).body(postagemRepository.save(postagem));
+
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tema não existe!", null);
+		}
+		
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+		// return postagemRepository.findById(postagem.getId())
+		// .map(response -> ResponseEntity.status(HttpStatus.OK) /* Retornar se foi encontrado o id digitado */
+		// .body(postagemRepository.save(postagem))) /* Salvar os dados atualizados */
+		// .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build()); /* Se não for encontrado, mostrar o erro 404 NOT FOUND */
 
 		// UPDATE tb_postagens SET titulo = ?, texto = ?, WHERE id = ?;
 	}
@@ -75,17 +90,19 @@ public class PostagemController {
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void delete(@PathVariable Long id) {
-		Optional<Postagem> postagem = postagemRepository.findById(id); /*Criar a Optional e procurar pela id digitada*/
+		Optional<Postagem> postagem = postagemRepository
+				.findById(id); /* Criar a Optional e procurar pela id digitada */
 		if (postagem.isEmpty()) /* Verificar se o valor digitado existe */
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND); /* Se não existir, retornar NOT FOUND */
 		else
-			postagemRepository.deleteById(id); /*Se for encontrado, deletar*/
-		
-		 
-		/* Optional<Postagem> postagem = postagemRepository.findById(id);
-		.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))
-		.map(postagemRepository -> postagemRepository.; */
-		
+			postagemRepository.deleteById(id); /* Se for encontrado, deletar */
+
+		/*
+		 * Optional<Postagem> postagem = postagemRepository.findById(id);
+		 * .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))
+		 * .map(postagemRepository -> postagemRepository.;
+		 */
+
 		// DELETE FROM tb_postagens WHERE id = ?;
 	}
 }
