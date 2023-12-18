@@ -26,13 +26,13 @@ public class Postagem {
 	private Long id;
 	
 	@Column(length = 100)
-	@NotBlank(message = "O Atributo título é obrigatório!")
-	@Size(min = 5, max = 100, message = "O Atributo título deve conter no mínimo 5 e no máximo 100 caracteres.")
+	@NotBlank(message = "O atributo título é Obrigatório!")
+	@Size(min = 5, max = 100, message = "O atributo título deve conter no mínimo 05 e no máximo 100 caracteres")
 	private String titulo;
 	
 	@Column(length = 1000)
-	@NotBlank(message = "O Atributo texto é obrigatório!")
-	@Size(min = 10, max = 1000, message = "O Atributo título deve conter no mínimo 10 e no máximo 1000 caracteres.")
+	@NotBlank(message = "O atributo texto é obrigatório!")
+	@Size(min = 10, max = 1000, message = "O atributo texto deve conter no mínimo 10 e no máximo 1000 caracteres")
 	private String texto;
 	
 	@UpdateTimestamp
@@ -40,7 +40,7 @@ public class Postagem {
 	
 	@ManyToOne
 	@JsonIgnoreProperties("postagem")
-	private Tema tema;
+	private Tema tema; // esse é o "tema" que vai no mappedBy
 	
 
 	public Long getId() {
@@ -82,5 +82,5 @@ public class Postagem {
 	public void setTema(Tema tema) {
 		this.tema = tema;
 	}
-	
+
 }

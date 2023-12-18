@@ -44,7 +44,8 @@ public class PostagemController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Postagem> getById(@PathVariable Long id) {
-		return postagemRepository.findById(id).map(resposta -> ResponseEntity.ok(resposta))
+		return postagemRepository.findById(id)
+				.map(resposta -> ResponseEntity.ok(resposta))
 				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 
 		// SELECT * FROM tb_postagens WHERE id = ?;
@@ -90,8 +91,7 @@ public class PostagemController {
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void delete(@PathVariable Long id) {
-		Optional<Postagem> postagem = postagemRepository
-				.findById(id); /* Criar a Optional e procurar pela id digitada */
+		Optional<Postagem> postagem = postagemRepository.findById(id); /* Criar a Optional e procurar pela id digitada */
 		if (postagem.isEmpty()) /* Verificar se o valor digitado existe */
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND); /* Se não existir, retornar NOT FOUND */
 		else

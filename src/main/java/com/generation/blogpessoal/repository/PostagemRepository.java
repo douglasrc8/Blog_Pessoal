@@ -7,9 +7,9 @@ import org.springframework.data.repository.query.Param;
 
 import com.generation.blogpessoal.model.Postagem;
 
-public interface PostagemRepository extends JpaRepository<Postagem, Long>{
+public interface PostagemRepository extends JpaRepository<Postagem, Long> {
 
-	List<Postagem> findAllByTituloContainingIgnoreCase(@Param ("titulo") String titulo);
+	List<Postagem> findAllByTituloContainingIgnoreCase(@Param("titulo") String titulo);
 
-	//SELECT * FROM tb_postagens WHERE titulo LIKE "%?%";
+	// SELECT * FROM tb_postagens WHERE titulo LIKE "%?%";
 }
