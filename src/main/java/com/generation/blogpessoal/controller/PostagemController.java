@@ -105,4 +105,5 @@ public class PostagemController {
 
 		// DELETE FROM tb_postagens WHERE id = ?;
 	}
+	
 }
